@@ -61,6 +61,55 @@ const inputLoanAmount = document.querySelector(".form__input--loan-amount");
 const inputCloseUsername = document.querySelector(".form__input--user");
 const inputClosePin = document.querySelector(".form__input--pin");
 
+const displayMovements = function (movements) {
+  containerMovements.innerHTML = "";
+  movements.forEach(function (mov, i) {
+    const type = mov > 0 ? "deposit" : "withdrawal";
+    const html = `
+      <div class="movements__row">
+        <div class="movements__type movements__type--${type}">${
+      i + 1
+    } ${type}</div>
+        <div class="movements__value">${mov}€</div>
+      </div>
+    `;
+    containerMovements.insertAdjacentHTML("afterbegin", html);
+  });
+};
+
+displayMovements(account1.movements);
+
+const calcDisplaySummary = (movements) => {
+  const incomes = movements
+    .filter((mov) => mov > 0)
+    .reduce((acc, mov) => acc + mov);
+  const outcome = movements
+    .filter((mov) => mov < 0)
+    .reduce((acc, mov) => acc + mov);
+  const interest = movements
+    .filter((mov) => mov > 0)
+    .map((mov) => (mov * 1.2) / 100)
+    .filter((int) => int >= 1)
+    .reduce((acc, int) => acc + int);
+  labelSumIn.textContent = incomes + "€";
+  labelSumOut.textContent = Math.abs(outcome) + "€";
+  labelSumInterest.textContent = interest + "€";
+};
+
+calcDisplaySummary(account1.movements);
+
+const createUserName = function (accs) {
+  accs.forEach((account) => {
+    account.username = account.owner
+      .toLowerCase()
+      .split(" ")
+      .map((val) => val[0])
+      .join("");
+  });
+};
+
+createUserName(accounts);
+
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
@@ -74,3 +123,27 @@ const currencies = new Map([
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 /////////////////////////////////////////////////
+
+// CODE Challenge #1
+const checkDogs = function (dogsJulia, dogsKate) {
+  const dogsJuliaCorrected = dogsJulia.slice(1, -2);
+  const output = dogsJuliaCorrected.concat(dogsKate);
+  output.forEach((value, index) => {
+    console.log(
+      value >= 3
+        ? `Dog number ${index + 1} is an adult, and is ${value} years old`
+        : `Dog number ${index + 1} is still a puppy 🐶`
+    );
+  });
+};
+
+// CODE Challenge #2
+const calcAverageHumanAge = (ages) => {
+  const humanAges = ages.map((x) => (x <= 2 ? x * 2 : 16 + x * 4));
+  const adults = humanAges.filter((x) => x >= 18);
+  const averageAdultYears = adults.reduce((acc, x) => x + acc) / adults.length;
+  console.log(averageAdultYears);
+};
+
+// calcAverageHumanAge([5, 2, 4, 1, 15, 8, 3]);
+// calcAverageHumanAge([16, 6, 10, 5, 6, 1, 4]);
