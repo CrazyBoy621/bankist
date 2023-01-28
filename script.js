@@ -73,6 +73,26 @@ const inputLoanAmount = document.querySelector(".form__input--loan-amount");
 const inputCloseUsername = document.querySelector(".form__input--user");
 const inputClosePin = document.querySelector(".form__input--pin");
 
+const initialTime = 300;
+let timer = 300;
+var countdown;
+const closeTimerCountdown = function () {
+  const minute = String(Math.trunc(timer / 60)).padStart(2, 0);
+  const seconds = String(timer % 60).padStart(2, 0);
+  labelTimer.textContent = `${minute}:${seconds}`;
+  if (timer === 0) {
+    containerApp.style.opacity = 0;
+    labelWelcome.textContent = "Log in to get started";
+    clearInterval(countdown);
+  }
+  timer--;
+};
+
+function startCountdown() {
+  timer--;
+  countdown = setInterval(closeTimerCountdown, 1000);
+}
+
 function updateUI(acc) {
   displayBalance(acc);
   displayMovements(acc, sorted);
@@ -194,6 +214,9 @@ btnLogin.addEventListener("click", function (e) {
     containerApp.style.opacity = 100;
     inputLoginPin.value = inputLoginUsername.value = "";
     inputLoginPin.blur();
+    timer = initialTime;
+    clearInterval(countdown);
+    startCountdown();
   }
 });
 
@@ -209,6 +232,9 @@ btnTransfer.addEventListener("click", function (e) {
     recieverAcc &&
     recieverAcc.username !== currentAccount.username
   ) {
+    timer = initialTime;
+    clearInterval(countdown);
+    startCountdown();
     currentAccount.movements.push(-amount);
     recieverAcc.movements.push(amount);
     currentAccount.movementsDates.push(new Date().toISOString());
@@ -241,6 +267,9 @@ btnLoan.addEventListener("click", function (e) {
     amount > 0 &&
     currentAccount.movements.some((mov) => mov >= amount * 0.1)
   ) {
+    timer = initialTime;
+    clearInterval(countdown);
+    startCountdown();
     inputLoanAmount.value = "";
     currentAccount.movements.push(amount);
     currentAccount.movementsDates.push(new Date().toISOString());
@@ -251,6 +280,9 @@ btnLoan.addEventListener("click", function (e) {
 let sorted = false;
 btnSort.addEventListener("click", function (e) {
   e.preventDefault();
+  timer = initialTime;
+  clearInterval(countdown);
+  startCountdown();
   displayMovements(currentAccount.movements, !sorted);
   sorted = !sorted;
 });
